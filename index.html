@@ -9,17 +9,22 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Finanças PRO">
     
+    <link rel="icon" type="image/png" href="icone.png">
+    <link rel="apple-touch-icon" href="icone.png">
+    
     <link rel="manifest" href="manifest.json">
 
     <style>
         :root {
-            --primary: #2563eb;
-            --success: #16a34a;
-            --danger: #dc2626;
-            --background: #f8fafc;
-            --surface: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+            --primary: #1d4ed8;       /* Azul do ícone */
+            --success: #16a34a;       /* Verde do crescimento */
+            --danger: #dc2626;        /* Vermelho para alertas/saídas */
+            --accent: #eab308;        /* Dourado PRO do ícone */
+            --background: #0f172a;    /* Fundo escuro elegante combinando com o ícone */
+            --surface: #1e293b;       /* Superfície dos cartões */
+            --text: #f8fafc;          /* Texto claro para fundo escuro */
+            --text-muted: #94a3b8;
+            --border: #334155;
         }
 
         * {
@@ -46,11 +51,28 @@
         header {
             margin-bottom: 25px;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .app-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 18px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--accent);
         }
 
         h1 {
-            color: var(--primary);
+            color: var(--text);
+            font-size: 2rem;
             margin-bottom: 5px;
+        }
+        
+        h1 span {
+            color: var(--accent);
         }
 
         .badges-container {
@@ -63,24 +85,27 @@
 
         .badge {
             display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
+            padding: 5px 12px;
+            border-radius: 20px;
             font-size: 0.75rem;
             font-weight: bold;
-            background-color: #e2e8f0;
+            background-color: var(--surface);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
             cursor: pointer;
+            transition: all 0.2s;
         }
 
         .badge.active {
-            background-color: #dbeafe;
-            color: var(--primary);
-            border: 1px solid var(--primary);
+            background-color: rgba(29, 78, 216, 0.2);
+            color: #60a5fa;
+            border-color: #3b82f6;
         }
 
         #btn-instalar {
             display: none;
-            background-color: #0f172a;
-            color: white;
+            background-color: var(--accent);
+            color: #0f172a;
             margin: 15px auto 0 auto;
             padding: 10px 20px;
             border-radius: 20px;
@@ -88,7 +113,12 @@
             border: none;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3);
+            transition: transform 0.2s;
+        }
+        
+        #btn-instalar:hover {
+            transform: scale(1.05);
         }
 
         .dashboard {
@@ -101,62 +131,65 @@
         .card {
             background: var(--surface);
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             border-left: 5px solid var(--border);
         }
 
         .card.entradas { border-left-color: var(--success); }
         .card.saidas { border-left-color: var(--danger); }
-        .card.total { border-left-color: var(--primary); }
+        .card.total { border-left-color: var(--accent); }
 
         .card h3 {
             font-size: 0.85rem;
             text-transform: uppercase;
-            color: #64748b;
+            color: var(--text-muted);
             margin-bottom: 10px;
+            letter-spacing: 0.5px;
         }
 
         .card p {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: bold;
         }
 
         .form-container {
             background: var(--surface);
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             margin-bottom: 25px;
+            border: 1px solid var(--border);
         }
 
         .form-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 12px;
             align-items: end;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             font-size: 0.85rem;
             font-weight: 600;
+            color: var(--text-muted);
         }
 
         input, select {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 0.95rem;
             outline: none;
-            background: var(--surface);
+            background: var(--background);
             color: var(--text);
         }
 
         input:focus, select:focus {
-            border-color: var(--primary);
+            border-color: var(--accent);
         }
 
         button[type="submit"] {
@@ -164,18 +197,24 @@
             color: white;
             border: none;
             padding: 11px 20px;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 0.95rem;
             cursor: pointer;
             font-weight: 600;
             transition: background 0.2s;
+            box-shadow: 0 4px 6px rgba(29, 78, 216, 0.3);
+        }
+
+        button[type="submit"]:hover {
+            background-color: #2563eb;
         }
 
         .table-container {
             background: var(--surface);
-            border-radius: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             overflow-x: auto;
+            border: 1px solid var(--border);
         }
 
         table {
@@ -185,14 +224,14 @@
         }
 
         th, td {
-            padding: 12px 15px;
+            padding: 14px 15px;
             border-bottom: 1px solid var(--border);
             font-size: 0.95rem;
         }
 
         th {
-            background-color: #f1f5f9;
-            color: #475569;
+            background-color: rgba(15, 23, 42, 0.6);
+            color: var(--text-muted);
             font-weight: 600;
         }
 
@@ -201,11 +240,12 @@
         
         .meio-pagamento {
             font-size: 0.75rem;
-            background: #f1f5f9;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #475569;
+            background: var(--background);
+            padding: 3px 8px;
+            border-radius: 6px;
+            color: var(--text-muted);
             font-weight: 500;
+            border: 1px solid var(--border);
         }
 
         .btn-delete {
@@ -214,8 +254,9 @@
             padding: 4px 8px;
             font-size: 0.8rem;
             border: 1px solid var(--danger);
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: all 0.2s;
         }
 
         .btn-delete:hover {
@@ -225,8 +266,8 @@
 
         .empty-msg {
             text-align: center;
-            padding: 30px;
-            color: #64748b;
+            padding: 40px;
+            color: var(--text-muted);
         }
     </style>
 </head>
@@ -234,12 +275,13 @@
 
     <div class="container">
         <header>
-            <h1>Finanças PRO</h1>
+            <img src="icone.png" alt="Finanças PRO Logo" class="app-logo">
+            <h1>Finanças <span>PRO</span></h1>
             <div class="badges-container">
-                <span class="badge">🔒 Local e Seguro</span>
-                <span id="badge-notificacao" class="badge" onclick="solicitarNotificacao()">🔔 Ativar Notificações</span>
+                <span class="badge">🔒 Armazenamento Local Seguro</span>
+                <span id="badge-notificacao" class="badge" onclick="solicitarNotificacao()">🔔 Ativar Alertas</span>
             </div>
-            <button id="btn-instalar">📲 Instalar Aplicativo</button>
+            <button id="btn-instalar">📲 Instalar Aplicação</button>
         </header>
 
         <div class="dashboard">
@@ -299,7 +341,7 @@
                 <tbody id="transaction-history"></tbody>
             </table>
             <div id="empty-state" class="empty-msg" style="display: none;">
-                Nenhuma transação cadastrada ainda.
+                Nenhuma transação registada ainda.
             </div>
         </div>
     </div>
@@ -317,7 +359,7 @@
         const btnInstalar = document.getElementById('btn-instalar');
         const badgeNotif = document.getElementById('badge-notificacao');
 
-        let transacoes = JSON.parse(localStorage.getItem('transacoes_pro')) || [];
+        let transacoes = JSON.parse(localStorage.getItem('transacoes_v2_pro')) || [];
 
         function formatarMoeda(valor) {
             return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -344,7 +386,7 @@
                             ${isEntrada ? '+' : '-'} ${formatarMoeda(t.valor)}
                         </td>
                         <td><span class="meio-pagamento">${isEntrada ? 'Recebido' : t.tipo}</span></td>
-                        <td><button class="btn-delete" onclick="deletarTransacao(${index})">Excluir</button></td>
+                        <td><button class="btn-delete" onclick="deletarTransacao(${index})">Eliminar</button></td>
                     `;
                     historyTable.appendChild(tr);
                 });
@@ -354,13 +396,17 @@
             txtEntradas.innerText = formatarMoeda(entradas);
             txtSaidas.innerText = formatarMoeda(saidas);
             txtTotal.innerText = formatarMoeda(total);
-            txtTotal.style.color = total >= 0 ? 'var(--success)' : 'var(--danger)';
+            
+            // Destaca o saldo total com base no valor (Verde positivo, Amarelo/Dourado neutro, Vermelho negativo)
+            if (total > 0) txtTotal.style.color = 'var(--success)';
+            else if (total === 0) txtTotal.style.color = 'var(--accent)';
+            else txtTotal.style.color = 'var(--danger)';
             
             checarNotificacaoFimDeMes(saidas, total);
         }
 
         function salvarNoDispositivo() {
-            localStorage.setItem('transacoes_pro', JSON.stringify(transacoes));
+            localStorage.setItem('transacoes_v2_pro', JSON.stringify(transacoes));
             atualizarInterface();
         }
 
@@ -383,14 +429,14 @@
             salvarNoDispositivo();
         }
 
-        // --- SISTEMA DE NOTIFICAÇÕES ---
+        // --- SISTEMA DE NOTIFICAÇÕES NATIVAS ---
         function verificarStatusNotificacao() {
             if (!("Notification" in window)) {
                 badgeNotif.style.display = 'none';
                 return;
             }
             if (Notification.permission === "granted") {
-                badgeNotif.innerText = "🔔 Notificações Ativas";
+                badgeNotif.innerText = "🔔 Alertas Ativos";
                 badgeNotif.classList.add('active');
             }
         }
@@ -400,7 +446,10 @@
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
                     verificarStatusNotificacao();
-                    new Notification("Finanças PRO", { body: "Pronto! Você receberá alertas aqui." });
+                    new Notification("Finanças PRO", { 
+                        body: "Excelente! As notificações automáticas de fim de mês estão configuradas.",
+                        icon: "icone.png"
+                    });
                 }
             });
         }
@@ -409,23 +458,22 @@
             if (!("Notification" in window) || Notification.permission !== "granted") return;
 
             const hoje = new Date();
-            // Verifica se amanhã é dia 1º, significando que HOJE é o último dia do mês corrente
             const amanha = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 1);
             
+            // Se o dia de amanhã for 1, significa que hoje é o último dia do mês corrente
             if (amanha.getDate() === 1) {
-                // Evita disparar múltiplas vezes no mesmo dia salvando uma flag diária
-                const chaveTrava = `notif_enviada_${hoje.getFullYear()}_${hoje.getMonth()}`;
+                const chaveTrava = `notif_pro_enviada_${hoje.getFullYear()}_${hoje.getMonth()}`;
                 if (!localStorage.getItem(chaveTrava)) {
                     new Notification("Fechamento do Mês! 📊", {
-                        body: `Mês encerrando! Total gasto: ${formatarMoeda(totalGasto)}. Seu saldo atual é de ${formatarMoeda(saldoAtual)}. Abra o app para conferir!`,
-                        icon: "https://cdn-icons-png.flaticon.com/512/2454/2454261.png"
+                        body: `O mês terminou! Total gasto: ${formatarMoeda(totalGasto)}. Saldo atual acumulado: ${formatarMoeda(saldoAtual)}. Abra a aplicação para rever.`,
+                        icon: "icone.png"
                     });
                     localStorage.setItem(chaveTrava, "true");
                 }
             }
         }
 
-        // --- INSTALAÇÃO PWA ---
+        // --- INSTALAÇÃO PROGRESSIVE WEB APP (PWA) ---
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
