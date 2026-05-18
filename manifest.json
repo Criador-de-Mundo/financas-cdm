@@ -4,12 +4,12 @@
   "description": "Gerenciador financeiro pessoal 100% offline e seguro.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#2563eb",
+  "background_color": "#0f172a",
+  "theme_color": "#1d4ed8",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2454/2454261.png",
+      "src": "./icone.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
