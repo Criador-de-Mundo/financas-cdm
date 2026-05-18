@@ -22,8 +22,7 @@ Você tem duas formas de usar este projeto:
 
 ### 1. Pelo Deploy do GitHub Pages (Recomendado para Celular)
 Basta acessar o link do projeto gerado pelo GitHub Pages:
-`https://seu-usuario.github.io/nome-do-repositorio/`
-
+`https://criador-de-mundo.github.io/financas-cdm/`
 ### 2. Rodando Localmente
 1. Faça o download dos arquivos `index.html` e `manifest.json`.
 2. Coloque os dois arquivos na mesma pasta.
