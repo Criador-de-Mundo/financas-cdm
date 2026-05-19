@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanças PRO - Banco Digital</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Finanças PRO">
+    
+    <link rel="icon" type="image/png" href="icone.png">
+    <link rel="apple-touch-icon" href="icone.png">
+    <link rel="manifest" href="manifest.json">
+
+    <style>
+        :root {
+            --primary: #6366f1;       
+            --success: #10b981;       
+            --danger: #f43f5e;        
+            --accent: #f59e0b;        
+            --info: #06b6d4;          
+            --background: #070a13;    
+            --surface: #111524;       
+            --text: #ffffff;          
+            --text-muted: #6b7280;    
+            --border: #1e2640;        
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px; 
+            padding-bottom: 40px;
+            position: relative;
+        }
+
+        .welcome-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--background);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .welcome-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        .welcome-card h2 { font-size: 1.5rem; margin-bottom: 10px; color: var(--primary); }
+        .welcome-card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; }
+
+        .pwa-install-banner {
+            background: linear-gradient(135deg, var(--primary), #4338ca);
+            padding: 12px 16px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        .pwa-install-banner p { font-size: 0.85rem; font-weight: 600; }
+        .btn-install-now { background: white; color: var(--primary); border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            margin-bottom: 25px;
+        }
+
+        .profile-section { display: flex; align-items: center; gap: 12px; }
+        .bank-logo { width: 42px; height: 42px; border-radius: 12px; border: 1px solid var(--border); }
+        .user-info h1 { font-size: 1rem; font-weight: 700; }
+
+        .hamburger-btn {
+            background: transparent; border: none; color: var(--text);
+            font-size: 1.6rem; cursor: pointer; padding: 4px 8px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .sidebar-menu {
+            position: fixed; top: 0; right: -280px; width: 280px; height: 100%;
+            background: var(--surface); border-left: 1px solid var(--border);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.6); z-index: 999;
+            transition: right 0.3s ease-in-out; padding: 24px;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .sidebar-menu.open { right: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        .sidebar-header h2 { font-size: 1.1rem; color: var(--primary); font-weight: 700; }
+        .close-menu-btn { background: transparent; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; }
+        
+        .sidebar-options { display: flex; flex-direction: column; gap: 8px; }
+        .sidebar-options button {
+            background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border);
+            color: var(--text); padding: 14px 16px; border-radius: 12px;
+            font-size: 0.9rem; font-weight: 600; text-align: left;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .sidebar-options button:hover, .sidebar-options button.active {
+            background: var(--primary); color: white; border-color: var(--primary); transform: translateX(5px);
+        }
+
+        .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 998; display: none; }
+        .menu-overlay.show { display: block; }
+
+        .app-screen { display: none; }
+        .app-screen.active-screen { display: block; }
+
+        .account-card {
+            background: linear-gradient(145deg, #111524 0%, #1e2540 100%);
+            padding: 24px; border-radius: 24px; border: 1px solid var(--border);
+            margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            position: relative;
+        }
+        .balance-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .account-card h2 { font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; }
+        
+        .btn-toggle-visibility { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; padding: 4px; display: flex; align-items: center; }
+        .btn-toggle-visibility:hover { color: var(--text); }
+        .main-balance { font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; transition: filter 0.2s ease; }
+        
+        .blurred-value { filter: blur(8px); user-select: none; pointer-events: none; }
+
+        .method-panel, .operation-card, .calc-card, .statement-card, .meta-user-card { background: var(--surface); border-radius: 20px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .method-panel h3, .operation-card h3, .calc-card h3, .statement-card h3, .meta-user-card h3 { font-size: 0.95rem; margin-bottom: 14px; }
+
+        .form-grid { display: flex; flex-direction: column; gap: 14px; }
+        .input-block label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; display: block; }
+        input, select { width: 100%; padding: 12px; background: var(--background); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 0.9rem; outline: none; }
+        input:focus, select:focus { border-color: var(--primary); }
+        .row-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .btn-confirm { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; width: 100%; }
+        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 12px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+
+        .metas-lista-container { display: flex; flex-direction: column; gap: 16px; margin-top: 15px; }
+        .meta-item-card { background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 18px; padding: 16px; }
+        .meta-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .meta-title { font-weight: 700; font-size: 1rem; color: var(--info); }
+        .btn-delete-meta { background: transparent; border: none; color: var(--danger); font-weight: bold; cursor: pointer; font-size: 0.8rem; }
+        
+        .progress-bar-bg { background: rgba(255,255,255,0.05); height: 8px; border-radius: 4px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; width: 0%; border-radius: 4px; transition: width 0.4s ease; }
+        .progress-labels { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; margin-bottom: 4px; }
+        
+        .meta-actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+        .btn-action-meta { padding: 10px; border-radius: 10px; border: 1px solid var(--border); font-size: 0.8rem; font-weight: 700; cursor: pointer; color: white; }
+        .btn-add-fund { background: rgba(16, 185, 129, 0.15); border-color: var(--success); color: var(--success); }
+        .btn-take-fund { background: rgba(244, 63, 94, 0.15); border-color: var(--danger); color: var(--danger); }
+
+        .currency-list-scroll { display: flex; flex-direction: column; gap: 8px; max-height: 240px; overflow-y: auto; padding-right: 4px; margin-bottom: 10px; }
+        .convert-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--background); border: 1px solid var(--border); border-radius: 12px; }
+        .convert-item span { font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
+        .convert-item strong { font-size: 0.95rem; color: var(--success); transition: filter 0.2s ease; }
+        .result-box { background: rgba(255,255,255,0.02); border: 1px dashed var(--border); padding: 12px; border-radius: 12px; text-align: center; font-size: 0.85rem; color: var(--accent); font-weight: 600; }
+
+        .cash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .cash-block { background: var(--background); border: 1px solid var(--border); padding: 8px; border-radius: 10px; text-align: center; }
+        .cash-block label { font-size: 0.7rem; color: var(--text-muted); font-weight: bold; display: block; margin-bottom: 4px; }
+        .cash-block input { padding: 6px; text-align: center; font-size: 0.8rem; }
+        .calc-sub-title { font-size: 0.75rem; color: var(--primary); margin-bottom: 10px; margin-top: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-left: 2px solid var(--primary); padding-left: 5px;}
+
+        .statement-list { display: flex; flex-direction: column; gap: 12px; }
+        .statement-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 14px; }
+        .val-amount.income { color: var(--success); }
+        .btn-reverse { background: transparent; color: var(--danger); border: none; font-size: 0.7rem; font-weight: 600; cursor: pointer; }
+        .empty-state { text-align: center; padding: 30px; color: var(--text-muted); font-size: 0.8rem; }
+        .utility-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="welcome-screen" class="welcome-overlay" style="display: none;">
+        <div class="welcome-card">
+            <h2>Seja bem-vindo!</h2>
+            <p>Digite seu nome para configurar seu ecossistema financeiro:</p>
+            <div class="form-grid">
+                <input type="text" id="init-username-input" placeholder="Ex: João Silva...">
+                <button class="btn-confirm" onclick="salvarNomeInicial()">Começar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <div id="pwa-banner" class="pwa-install-banner">
+            <p>📱 Usar versão Aplicativo no celular?</p>
+            <button class="btn-install-now" onclick="instalarPWA()">Instalar</button>
+        </div>
+
+        <header>
+            <div class="profile-section">
+                <img src="icone.png" alt="Finanças PRO" class="bank-logo">
+                <div class="user-info">
+                    <h1 id="header-user-display">Olá, Usuário</h1>
+                </div>
+            </div>
+            <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
+        </header>
+
+        <div id="tela-inicial" class="app-screen active-screen">
+            <div class="account-card">
+                <div class="balance-header">
+                    <h2>Saldo Disponível</h2>
+                    <button class="btn-toggle-visibility" onclick="toggleBlurSaldo()">
+                        <span id="visibility-icon">👁️</span>
+                    </button>
+                </div>
+                <div id="main-balance-val" class="main-balance">R$ 0,00</div>
+            </div>
+
+            <div class="operation-card">
+                <h3>Nova Operação</h3>
+                <form id="bank-form">
+                    <div class="form-grid">
+                        <div class="input-block">
+                            <label>Descrição</label>
+                            <input type="text" id="descricao" placeholder="Ex: Salário..." required>
+                        </div>
+                        <div class="row-inputs">
+                            <div class="input-block">
+                                <label>Valor (R$)</label>
+                                <input type="number" id="valor" step="0.01" placeholder="0,00" required>
+                            </div>
+                            <div class="input-block">
+                                <label>Tipo</label>
+                                <select id="tipo">
+                                    <option value="entrada">💵 Depósito / Entrada</option>
+                                    <option value="Crédito-Necessidade">💳 Crédito (Necessidades)</option>
+                                    <option value="Crédito-Desejo">💳 Crédito (Desejos)</option>
+                                    <option value="Débito-Necessidade">⚡ Pix (Necessidades)</option>
+                                    <option value="Débito-Desejo">⚡ Pix (Desejos)</option>
+                                    <option value="Dinheiro-Necessidade">💰 Dinheiro</option>
+                                    <option value="Investimento">📈 Poupança (20%)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-confirm">Confirmar Lançamento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="tela-metas" class="app-screen">
+            <div class="meta-user-card">
+                <h3>Criar Objetivo</h3>
+                <div class="form-grid">
+                    <input type="text" id="new-meta-name" placeholder="Ex: Viagem...">
+                    <input type="number" id="new-meta-value" placeholder="Custo Total (R$)">
+                    <button class="btn-confirm" onclick="criarNovaMeta()">Adicionar Meta</button>
+                </div>
+            </div>
+            <div id="metas-lista" class="metas-lista-container"></div>
+        </div>
+
+        <div id="tela-metodo" class="app-screen">
+            <div class="method-panel">
+                <h3>Distribuição Regra 50-30-20</h3>
+                <input type="number" id="manual-method-value" placeholder="Valor Customizado" oninput="atualizarInterface()" style="margin-bottom: 15px;">
+                <div class="progress-group" style="display:flex; flex-direction:column; gap:14px;">
+                    <div>Necessidades (50%): <span id="lbl-needs">R$ 0,00</span></div>
+                    <div>Desejos (30%): <span id="lbl-wants">R$ 0,00</span></div>
+                    <div>Investimentos (20%): <span id="lbl-savings">R$ 0,00</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tela-conversor" class="app-screen">
+            <div class="calc-card">
+                <h3>Câmbio Base Global</h3>
+                <div class="currency-list-scroll">
+                    <div class="convert-item"><span>🇧🇷 BRL</span><strong id="c-brl">R$ 0,00</strong></div>
+                    <div class="convert-item"><span>🇺🇸 USD</span><strong id="c-usd">$ 0,00</strong></div>
+                    <div class="convert-item"><span>🇪🇺 EUR</span><strong id="c-eur">€ 0,00</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tela-calc" class="app-screen">
+            <div class="calc-card">
+                <h3>Caixa Físico</h3>
+                <div class="cash-grid">
+                    <div class="cash-block"><label>R$ 100</label><input type="number" id="n100" value="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 50</label><input type="number" id="n50" value="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 20</label><input type="number" id="n20" value="0" oninput="somarDinheiroFisico()"></div>
+                </div>
+                <div id="total-carteira" class="result-box" style="margin-top:15px;">Total: R$ 0,00</div>
+            </div>
+        </div>
+
+        <div id="tela-mais" class="app-screen">
+            <div class="statement-card">
+                <h3>Histórico</h3>
+                <div id="statement-list-container" class="statement-list"></div>
+                <div class="utility-buttons">
+                    <button class="btn-secondary" onclick="limparBancoDados()" style="color:var(--danger); border-color:var(--danger);">Limpar Tudo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sidebar-menu" class="sidebar-menu">
+        <div class="sidebar-header"><h2>Menu</h2><button class="close-menu-btn" onclick="toggleMenu()">✕</button></div>
+        <div class="sidebar-options">
+            <button id="nav-btn-inicial" class="active" onclick="mudarTela('inicial')">🏠 Inicial</button>
+            <button id="nav-btn-metas" onclick="mudarTela('metas')">🎯 Metas</button>
+            <button id="nav-btn-metodo" onclick="mudarTela('metodo')">📊 50-30-20</button>
+            <button id="nav-btn-conversor" onclick="mudarTela('conversor')">🌐 Moedas</button>
+            <button id="nav-btn-calc" onclick="mudarTela('calc')">🧮 Caixa</button>
+            <button id="nav-btn-mais" onclick="mudarTela('mais')">⚙️ Histórico</button>
+        </div>
+    </div>
+    <div id="menu-overlay" class="menu-overlay" onclick="toggleMenu()"></div>
+
+    <script>
+        let instaladorPWA = null;
+        // INSIRA SUA CHAVE PÚBLICA VAPID GERADA AQUI
+        const PUBLIC_VAPID_KEY = 'SUA_CHAVE_PUBLICA_VAPID_AQUI'; 
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const estaNoApp = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            if (estaNoApp) {
+                document.getElementById('pwa-banner').style.display = 'none';
+            }
+        });
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            instaladorPWA = e;
+            if (!(window.matchMedia('(display-mode: standalone)').matches)) {
+                document.getElementById('pwa-banner').style.display = 'flex';
+            }
+        });
+
+        function instalarPWA() {
+            if (!instaladorPWA) return;
+            document.getElementById('pwa-banner').style.display = 'none';
+            instaladorPWA.prompt();
+            instaladorPWA = null;
+        }
+
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            navigator.serviceWorker.register('sw.js')
+            .then(reg => {
+                console.log('SW Ativo');
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
+                    })
+                    .then(subscription => {
+                        fetch('../backend/salvar_inscricao.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(subscription)
+                        });
+                    }).catch(err => console.log('Erro assinatura push', err));
+                });
+            });
+        }
+
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
+            return outputArray;
+        }
+
+        // --- SISTEMA DE LOGICA ---
+        let transacoes = JSON.parse(localStorage.getItem('b_data')) || [];
+        let usuarioMetas = JSON.parse(localStorage.getItem('b_metas')) || [];
+        let saldoOcultado = JSON.parse(localStorage.getItem('b_blur')) || false;
+
+        function verificarNomeUsuario() {
+            const n = localStorage.getItem('b_user');
+            if (!n) document.getElementById('welcome-screen').style.display = 'flex';
+            else document.getElementById('header-user-display').innerText = `Olá, ${n}`;
+        }
+
+        function salvarNomeInicial() {
+            const v = document.getElementById('init-username-input').value.trim();
+            if(!v) return;
+            localStorage.setItem('b_user', v);
+            document.getElementById('welcome-screen').style.display = 'none';
+            verificarNomeUsuario();
+        }
+
+        function toggleBlurSaldo() { saldoOcultado = !saldoOcultado; localStorage.setItem('b_blur', saldoOcultado); aplicarEstadoVisibilidade(); }
+        function aplicarEstadoVisibilidade() {
+            const mb = document.getElementById('main-balance-val');
+            if(saldoOcultado) mb.classList.add('blurred-value'); 
+            else mb.classList.remove('blurred-value');
+        }
+
+        function toggleMenu() { document.getElementById('sidebar-menu').classList.toggle('open'); document.getElementById('menu-overlay').classList.toggle('show'); }
+        function mudarTela(id) { document.querySelectorAll('.app-screen').forEach(t => t.classList.remove('active-screen')); document.getElementById(`tela-${id}`).classList.add('active-screen'); toggleMenu(); }
+
+        function criarNovaMeta() {
+            const n = document.getElementById('new-meta-name').value;
+            const v = parseFloat(document.getElementById('new-meta-value').value);
+            if(!n || !v) return;
+            usuarioMetas.push({id: Date.now(), nome: n, alvo: v, economizado: 0});
+            localStorage.setItem('b_metas', JSON.stringify(usuarioMetas));
+            renderizarMetas();
+        }
+
+        function renderizarMetas() {
+            const c = document.getElementById('metas-lista'); c.innerHTML = "";
+            usuarioMetas.forEach(m => {
+                const d = document.createElement('div'); d.className = "meta-item-card";
+                d.innerHTML = `<strong>${m.nome}</strong> - Alvo: R$ ${m.alvo}`;
+                c.appendChild(d);
+            });
+        }
+
+        function atualizarInterface() {
+            let total = 0;
+            transacoes.forEach(t => total += (t.tipo === 'entrada' ? t.valor : -t.valor));
+            document.getElementById('main-balance-val').innerText = `R$ ${total.toFixed(2)}`;
+            
+            document.getElementById('lbl-needs').innerText = `R$ ${(total*0.5).toFixed(2)}`;
+            document.getElementById('lbl-wants').innerText = `R$ ${(total*0.3).toFixed(2)}`;
+            document.getElementById('lbl-savings').innerText = `R$ ${(total*0.2).toFixed(2)}`;
+
+            const hist = document.getElementById('statement-list-container'); hist.innerHTML = "";
+            transacoes.forEach(t => {
+                const i = document.createElement('div'); i.className = "statement-item";
+                i.innerHTML = `<span>${t.descricao}</span> <strong>R$ ${t.valor.toFixed(2)}</strong>`;
+                hist.appendChild(i);
+            });
+            aplicarEstadoVisibilidade();
+        }
+
+        function somarDinheiroFisico() {
+            let t = (parseFloat(document.getElementById('n100').value)||0)*100 + (parseFloat(document.getElementById('n50').value)||0)*50 + (parseFloat(document.getElementById('n20').value)||0)*20;
+            document.getElementById('total-carteira').innerText = `Total: R$ ${t.toFixed(2)}`;
+        }
+
+        function limparBancoDados() { transacoes = []; localStorage.removeItem('b_data'); atualizarInterface(); }
+
+        document.getElementById('bank-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            transacoes.push({
+                descricao: document.getElementById('descricao').value,
+                valor: parseFloat(document.getElementById('valor').value),
+                tipo: document.getElementById('tipo').value
+            });
+            localStorage.setItem('b_data', JSON.stringify(transacoes));
+            atualizarInterface();
+        });
+
+        verificarNomeUsuario();
+        atualizarInterface();
+        renderizarMetas();
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS `push_subscriptions` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `endpoint` TEXT NOT NULL,
+  `public_key` TEXT NOT NULL,
+  `auth_token` TEXT NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
