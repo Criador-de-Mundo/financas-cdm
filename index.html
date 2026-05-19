@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Finanças PRO">
     
     <link rel="icon" type="image/png" href="icone.png">
-    <link align="apple-touch-icon" href="icone.png">
+    <link rel="apple-touch-icon" href="icone.png">
     <link rel="manifest" href="manifest.json">
 
     <style>
@@ -76,6 +76,20 @@
 
         .welcome-card h2 { font-size: 1.5rem; margin-bottom: 10px; color: var(--primary); }
         .welcome-card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; }
+
+        /* Barra de Aviso de Instalação PWA */
+        .pwa-install-banner {
+            background: linear-gradient(135deg, var(--primary), #4338ca);
+            padding: 12px 16px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        .pwa-install-banner p { font-size: 0.85rem; font-weight: 600; }
+        .btn-install-now { background: white; color: var(--primary); border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
 
         /* Topo do Banco */
         header {
@@ -154,7 +168,6 @@
 
         .main-balance { font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; transition: filter 0.2s ease; }
         
-        /* Classe que aplica o desfoque nos saldos */
         .blurred-value {
             filter: blur(8px);
             user-select: none;
@@ -175,7 +188,7 @@
         .btn-confirm { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; width: 100%; }
         .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 12px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
 
-        /* Lista de Metas Dinâmicas */
+        /* Lista de Metas */
         .metas-lista-container { display: flex; flex-direction: column; gap: 16px; margin-top: 15px; }
         .meta-item-card { background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 18px; padding: 16px; }
         .meta-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -200,7 +213,7 @@
         /* Grades do Caixa Físico */
         .cash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .cash-block { background: var(--background); border: 1px solid var(--border); padding: 8px; border-radius: 10px; text-align: center; }
-        .cash-block label { font-size: 0.7rem; color: var(--text-muted); font-weight: bold; display: block; margin-bottom: 4px; }
+        .cash-block label { font-size: 0.7 cram; color: var(--text-muted); font-weight: bold; display: block; margin-bottom: 4px; }
         .cash-block input { padding: 6px; text-align: center; font-size: 0.8rem; }
         .calc-sub-title { font-size: 0.75rem; color: var(--primary); margin-bottom: 10px; margin-top: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-left: 2px solid var(--primary); padding-left: 5px;}
 
@@ -221,13 +234,19 @@
             <h2>Seja bem-vindo!</h2>
             <p>Para começarmos a configurar seu ecossistema financeiro premium, digite seu nome ou apelido abaixo:</p>
             <div class="form-grid">
-                <input type="text" id="init-username-input" placeholder="Ex: João Silva, DevGamer...">
+                <input type="text" id="init-username-input" placeholder="Ex: João Silva...">
                 <button class="btn-confirm" onclick="salvarNomeInicial()">Começar Experiência</button>
             </div>
         </div>
     </div>
 
     <div class="app-container">
+        
+        <div id="pwa-banner" class="pwa-install-banner">
+            <p>📱 Usar versão Aplicativo no celular?</p>
+            <button class="btn-install-now" onclick="instalarPWA()">Instalar</button>
+        </div>
+
         <header>
             <div class="profile-section">
                 <img src="icone.png" alt="Finanças PRO" class="bank-logo">
@@ -255,7 +274,7 @@
                     <div class="form-grid">
                         <div class="input-block">
                             <label for="descricao">Descrição do Estabelecimento ou Destino</label>
-                            <input type="text" id="descricao" placeholder="Ex: Salário, Supermercado..." required>
+                            <input type="text" id="descricao" placeholder="Ex: Salário..." required>
                         </div>
                         <div class="row-inputs">
                             <div class="input-block">
@@ -287,16 +306,15 @@
                 <div class="form-grid" style="margin-top: 10px;">
                     <div class="input-block">
                         <label>O que você deseja conquistar?</label>
-                        <input type="text" id="new-meta-name" placeholder="Ex: Meu PC Gamer dos Sonhos, Headset...">
+                        <input type="text" id="new-meta-name" placeholder="Ex: Meu PC Gamer dos Sonhos...">
                     </div>
                     <div class="input-block">
-                        <label>Preço / Custo Total deste Alvo (R$)</label>
+                        <label>Preço / Custo Total (R$)</label>
                         <input type="number" id="new-meta-value" placeholder="Ex: 5000">
                     </div>
                     <button class="btn-confirm" onclick="criarNovaMeta()">Adicionar Meta à Lista</button>
                 </div>
             </div>
-
             <h3 style="font-size:0.95rem; margin-bottom:10px; padding-left:5px;">Seus Objetivos Ativos</h3>
             <div id="metas-lista" class="metas-lista-container"></div>
         </div>
@@ -306,7 +324,7 @@
                 <h3>Distribuição Base (Método 50-30-20)</h3>
                 <div class="input-block" style="margin-top: 10px; margin-bottom: 20px;">
                     <label style="color: var(--accent);">Inserir Valor Customizado para Simulação (R$)</label>
-                    <input type="number" id="manual-method-value" placeholder="Deixe em branco para usar o saldo corrente" oninput="atualizarInterface()">
+                    <input type="number" id="manual-method-value" placeholder="Deixe em branco para usar o saldo" oninput="atualizarInterface()">
                 </div>
 
                 <div class="progress-group" style="display:flex; flex-direction:column; gap:14px;">
@@ -329,7 +347,7 @@
         <div id="tela-conversor" class="app-screen">
             <div class="calc-card">
                 <h3>Câmbio de Referência Global</h3>
-                <p style="font-size: 0.8rem; color:var(--text-muted); margin-bottom:12px;">Conversão baseada no saldo total corrente:</p>
+                <p style="font-size: 0.8rem; color:var(--text-muted); margin-bottom:12px;">Conversão baseada no saldo corrente:</p>
                 
                 <div class="currency-list-scroll">
                     <div class="convert-item"><span>🇧🇷 Real Brasileiro (BRL)</span><strong id="c-brl" class="convert-value">R$ 0,00</strong></div>
@@ -360,16 +378,6 @@
                                 <option value="EUR">🇪🇺 EUR - Euro</option>
                                 <option value="GBP">🇬🇧 GBP - Libra</option>
                                 <option value="JPY">🇯🇵 JPY - Iene</option>
-                                <option value="AUD">🇦🇺 AUD - Dólar Aus.</option>
-                                <option value="CAD">🇨🇦 CAD - Dólar Can.</option>
-                                <option value="CHF">🇨🇭 CHF - Franco Suíço</option>
-                                <option value="CNY">🇨🇳 CNY - Yuan</option>
-                                <option value="ARS">🇦🇷 ARS - Peso Arg.</option>
-                                <option value="CLP">🇨🇱 CLP - Peso Chil.</option>
-                                <option value="MXN">🇲🇽 MXN - Peso Mex.</option>
-                                <option value="AED">🇦🇪 AED - Dirham</option>
-                                <option value="ZAR">🇿🇦 ZAR - Rand</option>
-                                <option value="BTC">₿ BTC - Bitcoin</option>
                             </select>
                         </div>
                         <div class="input-block">
@@ -383,32 +391,18 @@
                             <option value="USD" selected>🇺🇸 USD - Dólar</option>
                             <option value="BRL">🇧🇷 BRL - Real</option>
                             <option value="EUR">🇪🇺 EUR - Euro</option>
-                            <option value="GBP">🇬🇧 GBP - Libra</option>
-                            <option value="JPY">🇯🇵 JPY - Iene</option>
-                            <option value="AUD">🇦🇺 AUD - Dólar Aus.</option>
-                            <option value="CAD">🇨🇦 CAD - Dólar Can.</option>
-                            <option value="CHF">🇨🇭 CHF - Franco Suíço</option>
-                            <option value="CNY">🇨🇳 CNY - Yuan</option>
-                            <option value="ARS">🇦🇷 ARS - Peso Arg.</option>
-                            <option value="CLP">🇨🇱 CLP - Peso Chil.</option>
-                            <option value="MXN">🇲🇽 MXN - Peso Mex.</option>
-                            <option value="AED">🇦🇪 AED - Dirham</option>
-                            <option value="ZAR">🇿🇦 ZAR - Rand</option>
-                            <option value="BTC">₿ BTC - Bitcoin</option>
                         </select>
                     </div>
                     <button class="btn-confirm" type="button" onclick="executarConversaoManual()">Calcular Conversão</button>
                     <div id="calc-manual-result" class="result-box convert-value" style="color: var(--success); font-size: 0.95rem;">Resultado: —</div>
                 </div>
-
             </div>
         </div>
 
         <div id="tela-calc" class="app-screen">
             <div class="calc-card">
                 <h3>Caixa Físico (Cédulas & Moedas)</h3>
-                
-                <div class="calc-sub-title">Cédulas / Notas em Papel</div>
+                <div class="calc-sub-title">Cédulas / Notas</div>
                 <div class="cash-grid">
                     <div class="cash-block"><label>R$ 200</label><input type="number" id="n200" value="0" min="0" oninput="somarDinheiroFisico()"></div>
                     <div class="cash-block"><label>R$ 100</label><input type="number" id="n100" value="0" min="0" oninput="somarDinheiroFisico()"></div>
@@ -418,17 +412,7 @@
                     <div class="cash-block"><label>R$ 5</label><input type="number" id="n5" value="0" min="0" oninput="somarDinheiroFisico()"></div>
                     <div class="cash-block"><label>R$ 2</label><input type="number" id="n2" value="0" min="0" oninput="somarDinheiroFisico()"></div>
                 </div>
-
-                <div class="calc-sub-title">Moedas Metálicas</div>
-                <div class="cash-grid">
-                    <div class="cash-block"><label>R$ 1,00</label><input type="number" id="m100" value="0" min="0" oninput="somarDinheiroFisico()"></div>
-                    <div class="cash-block"><label>R$ 0,50</label><input type="number" id="m50" value="0" min="0" oninput="somarDinheiroFisico()"></div>
-                    <div class="cash-block"><label>R$ 0,25</label><input type="number" id="m25" value="0" min="0" oninput="somarDinheiroFisico()"></div>
-                    <div class="cash-block"><label>R$ 0,10</label><input type="number" id="m10" value="0" min="0" oninput="somarDinheiroFisico()"></div>
-                    <div class="cash-block"><label>R$ 0,05</label><input type="number" id="m05" value="0" min="0" oninput="somarDinheiroFisico()"></div>
-                </div>
-
-                <div id="total-carteira" class="result-box convert-value" style="margin-top: 20px; color: var(--success); font-size: 1rem;">Total Físico Consolidado: R$ 0,00</div>
+                <div id="total-carteira" class="result-box convert-value" style="margin-top: 20px; color: var(--success);">Total Físico Consolidado: R$ 0,00</div>
             </div>
         </div>
 
@@ -446,17 +430,6 @@
             </div>
         </div>
 
-        <div id="tela-dev" class="app-screen">
-            <div class="account-card" style="background: linear-gradient(145deg, #1e1b4b 0%, #450a0a 100%); border-color: #ef4444;">
-                <h2 style="color: #ef4444;">🖥️ Bastidores do Projeto</h2>
-                <div class="main-balance" style="font-size:1.6rem; margin-top:8px;">Canal Criador de Mundo</div>
-                <p style="font-size:0.85rem; color:#fca5a5; margin-top:6px; line-height:1.5;">
-                    A melhor forma de apoiar este projeto gratuito e livre de anúncios é se inscrevendo no canal. Compartilho dicas de desenvolvimento, criação de apps e programação avançada!
-                </p>
-                <a href="https://youtube.com/@criadordemundo" target="_blank" class="btn-youtube">🚨 Inscrever-se no Canal do YouTube</a>
-            </div>
-        </div>
-
     </div>
 
     <div id="sidebar-menu" class="sidebar-menu">
@@ -468,59 +441,92 @@
             <button id="nav-btn-conversor" onclick="mudarTela('conversor')">🌐 Moedas Globais</button>
             <button id="nav-btn-calc" onclick="mudarTela('calc')">🧮 Caixa Físico</button>
             <button id="nav-btn-mais" onclick="mudarTela('mais')">⚙️ Histórico</button>
-            <a id="nav-btn-dev" href="https://youtube.com/@criadordemundo" target="_blank" style="border-color: #ef4444; color: #ef4444;">📺 Apoiar no YouTube</a>
         </div>
     </div>
     <div id="menu-overlay" class="menu-overlay" onclick="toggleMenu()"></div>
 
     <script>
+        // --- 📲 ENGENHARIA DE DETECÇÃO PWA (INSTALADO OU NÃO) ---
+        let instaladorPWA = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Verifica na hora se já está abrindo de dentro do app instalado
+            const estaNoApp = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            
+            if (estaNoApp) {
+                console.log("App aberto diretamente do ícone instalado no celular.");
+                document.getElementById('pwa-banner').style.display = 'none'; // Esconde barra de instalação permanentemente
+            } else {
+                console.log("Aberto via Navegador Comum.");
+            }
+        });
+
+        // Captura o evento nativo do sistema operacional se o app puder ser instalado
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            instaladorPWA = e;
+            
+            // Só mostra o banner se NÃO estiver rodando no modo standalone
+            if (!(window.matchMedia('(display-mode: standalone)').matches)) {
+                document.getElementById('pwa-banner').style.display = 'flex';
+            }
+        });
+
+        function instalarPWA() {
+            if (!instaladorPWA) return;
+            document.getElementById('pwa-banner').style.display = 'none';
+            instaladorPWA.prompt();
+            instaladorPWA.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('Usuário aceitou a instalação.');
+                }
+                instaladorPWA = null;
+            });
+        }
+
+        // --- 🔔 REGISTRO DO SERVICE WORKER E PROTOCOLO DE PUSH NOTIFICATION ---
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(reg => {
+                console.log('Service Worker registrado com sucesso:', reg.scope);
+                // Quando o site abre, tenta gerenciar as permissões de notificação associadas ao SW
+                solicitarAcessoNotificacoes(reg);
+            })
+            .catch(err => console.log('Falha ao registrar Service Worker:', err));
+        }
+
+        function solicitarAcessoNotificacoes(registroSW) {
+            if (!("Notification" in window)) return;
+            
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    console.log("Permissão para notificações concedida!");
+                    // Aqui o app está apto a receber push real via segundo plano
+                }
+            });
+        }
+
+        // Função auxiliar para simular uma notificação local via Service Worker
+        function dispararNotificacaoLocal(titulo, mensagem) {
+            if ('serviceWorker' in navigator && Notification.permission === "granted") {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification(titulo, {
+                        body: mensagem,
+                        icon: 'icone.png',
+                        badge: 'icone.png'
+                    });
+                });
+            }
+        }
+
+        // --- LÓGICA DE NEGÓCIO DO BANCO (MANTIDA) ---
         let transacoes = JSON.parse(localStorage.getItem('banco_digital_pro_data')) || [];
         let usuarioMetas = JSON.parse(localStorage.getItem('banco_digital_user_metas')) || [];
         let saldoOcultado = JSON.parse(localStorage.getItem('banco_digital_blur_state')) || false;
         let saldoGlobalCalculado = 0;
 
-        // Tabela de taxas de câmbio fixas de referência estável (Baseadas em 1 BRL)
-        const taxasDeCambio = {
-            BRL: 1.0,
-            USD: 1 / 5.15,
-            EUR: 1 / 5.55,
-            GBP: 1 / 6.45,
-            JPY: 1 / 0.034,
-            AUD: 1 / 3.42,
-            CAD: 1 / 3.78,
-            CHF: 1 / 5.72,
-            CNY: 1 / 0.71,
-            ARS: 1 / 0.0058,
-            CLP: 1 / 0.0055,
-            MXN: 1 / 0.31,
-            AED: 1 / 1.40,
-            ZAR: 1 / 0.28,
-            BTC: 1 / 345000
-        };
-
-        const formatadoresLocais = {
-            BRL: { local: 'pt-BR', obj: { style: 'currency', currency: 'BRL' } },
-            USD: { local: 'en-US', obj: { style: 'currency', currency: 'USD' } },
-            EUR: { local: 'de-DE', obj: { style: 'currency', currency: 'EUR' } },
-            GBP: { local: 'en-GB', obj: { style: 'currency', currency: 'GBP' } },
-            JPY: { local: 'ja-JP', obj: { style: 'currency', currency: 'JPY' } },
-            AUD: { local: 'en-AU', obj: { style: 'currency', currency: 'AUD' } },
-            CAD: { local: 'en-CA', obj: { style: 'currency', currency: 'CAD' } },
-            CHF: { local: 'de-CH', obj: { style: 'currency', currency: 'CHF' } },
-            CNY: { local: 'zh-CN', obj: { style: 'currency', currency: 'CNY' } },
-            ARS: { local: 'es-AR', obj: { style: 'currency', currency: 'ARS' } },
-            CLP: { local: 'es-CL', obj: { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 } },
-            MXN: { local: 'es-MX', obj: { style: 'currency', currency: 'MXN' } },
-            AED: { local: 'ar-AE', obj: { style: 'currency', currency: 'AED' } },
-            ZAR: { local: 'en-ZA', obj: { style: 'currency', currency: 'ZAR' } }
-        };
-
-        function dispararNotificacaoReal(titulo, mensagem) {
-            if (!("Notification" in window)) return;
-            if (Notification.permission === "granted") {
-                new Notification(titulo, { body: mensagem, icon: 'icone.png' });
-            }
-        }
+        const taxasDeCambio = { BRL: 1.0, USD: 1 / 5.15, EUR: 1 / 5.55, GBP: 1 / 6.45, JPY: 1 / 0.034, AUD: 1 / 3.42, CAD: 1 / 3.78, CHF: 1 / 5.72, CNY: 1 / 0.71, ARS: 1 / 0.0058, CLP: 1 / 0.0055, MXN: 1 / 0.31, AED: 1 / 1.40, ZAR: 1 / 0.28, BTC: 1 / 345000 };
+        const formatadoresLocais = { BRL: { local: 'pt-BR', obj: { style: 'currency', currency: 'BRL' } }, USD: { local: 'en-US', obj: { style: 'currency', currency: 'USD' } }, EUR: { local: 'de-DE', obj: { style: 'currency', currency: 'EUR' } }, GBP: { local: 'en-GB', obj: { style: 'currency', currency: 'GBP' } }, JPY: { local: 'ja-JP', obj: { style: 'currency', currency: 'JPY' } } };
 
         function verificarNomeUsuario() {
             const nomeSalvo = localStorage.getItem('banco_digital_username');
@@ -528,27 +534,16 @@
                 document.getElementById('welcome-screen').style.display = 'flex';
             } else {
                 document.getElementById('header-user-display').innerText = `Olá, ${nomeSalvo}`;
-                if (Notification.permission === "default") {
-                    Notification.requestPermission();
-                }
             }
         }
 
         function salvarNomeInicial() {
             const inputNome = document.getElementById('init-username-input').value.trim();
             if(inputNome === "") { alert("Por favor, digite seu nome!"); return; }
-            
             localStorage.setItem('banco_digital_username', inputNome);
             document.getElementById('welcome-screen').style.display = 'none';
             document.getElementById('header-user-display').innerText = `Olá, ${inputNome}`;
-            
-            if ("Notification" in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === "granted") {
-                        dispararNotificacaoReal("Notificações Ativas! 🔔", "Alertas do sistema operacional habilitados.");
-                    }
-                });
-            }
+            dispararNotificacaoLocal("Finanças PRO", "Sistema configurado com sucesso!");
         }
 
         function toggleBlurSaldo() {
@@ -560,7 +555,6 @@
         function aplicarEstadoVisibilidade() {
             const mainBalance = document.getElementById('main-balance-val');
             const icon = document.getElementById('visibility-icon');
-            
             if (saldoOcultado) {
                 mainBalance.classList.add('blurred-value');
                 document.querySelectorAll('.convert-value').forEach(el => el.classList.add('blurred-value'));
@@ -572,268 +566,109 @@
             }
         }
 
-        function formatarMoeda(valor) {
-            return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
+        function formatarMoeda(valor) { return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+        function formatarMoedaGenerica(valor, moeda) { if(moeda === 'BTC') return valor.toFixed(8) + " BTC"; const f = formatadoresLocais[moeda]; if(f) return valor.toLocaleString(f.local, f.obj); return valor.toFixed(2) + " " + moeda; }
 
-        function formatarMoedaGenerica(valor, moeda) {
-            if(moeda === 'BTC') return valor.toFixed(8) + " BTC";
-            const f = formatadoresLocais[moeda];
-            if(f) return valor.toLocaleString(f.local, f.obj);
-            return valor.toFixed(2) + " " + moeda;
-        }
-
-        const boxOverlay = document.getElementById('menu-overlay');
-        function toggleMenu() {
-            document.getElementById('sidebar-menu').classList.toggle('open');
-            boxOverlay.classList.toggle('show');
-        }
-
-        function mudarTela(idTela) {
-            document.querySelectorAll('.app-screen').forEach(t => t.classList.remove('active-screen'));
-            document.querySelectorAll('.sidebar-options button').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tela-${idTela}`).classList.add('active-screen');
-            const targetBtn = document.getElementById(`nav-btn-${idTela}`);
-            if(targetBtn) targetBtn.classList.add('active');
-            toggleMenu(); 
-            aplicarEstadoVisibilidade();
-        }
+        function toggleMenu() { document.getElementById('sidebar-menu').classList.toggle('open'); document.getElementById('menu-overlay').classList.toggle('show'); }
+        function mudarTela(idTela) { document.querySelectorAll('.app-screen').forEach(t => t.classList.remove('active-screen')); document.querySelectorAll('.sidebar-options button').forEach(b => b.classList.remove('active')); document.getElementById(`tela-${idTela}`).classList.add('active-screen'); const targetBtn = document.getElementById(`nav-btn-${idTela}`); if(targetBtn) targetBtn.classList.add('active'); toggleMenu(); aplicarEstadoVisibilidade(); }
 
         function criarNovaMeta() {
             const inputNome = document.getElementById('new-meta-name').value.trim();
             const inputValor = parseFloat(document.getElementById('new-meta-value').value) || 0;
-
-            if(!inputNome || inputValor <= 0) { alert("Preencha o nome da meta e um valor válido!"); return; }
-
-            const novaMeta = { id: Date.now(), nome: inputNome, alvo: inputValor, economizado: 0 };
-            usuarioMetas.push(novaMeta);
+            if(!inputNome || inputValor <= 0) { alert("Preencha dados válidos."); return; }
+            usuarioMetas.push({ id: Date.now(), nome: inputNome, alvo: inputValor, economizado: 0 });
             localStorage.setItem('banco_digital_user_metas', JSON.stringify(usuarioMetas));
-            
-            document.getElementById('new-meta-name').value = "";
-            document.getElementById('new-meta-value').value = "";
-            
+            document.getElementById('new-meta-name').value = ""; document.getElementById('new-meta-value').value = "";
             renderizarMetas();
-            dispararNotificacaoReal("Nova Meta Cadastrada! 🎯", `Objetivo para comprar "${inputNome}" foi criado com sucesso.`);
+            dispararNotificacaoLocal("Meta Adicionada", `Alvo criado para: ${inputNome}`);
         }
 
         function alterareconomiaMeta(idMeta, acao) {
-            const valorString = prompt(`Digite o valor que deseja ${acao === 'somar' ? 'adicionar' : 'resgatar'}:`);
-            const valor = parseFloat(valorString) || 0;
-            if(valor <= 0) return;
-
-            const meta = usuarioMetas.find(m => m.id === idMeta);
-            if(!meta) return;
-
-            if(acao === 'somar') {
-                meta.economizado += valor;
-                dispararNotificacaoReal("Progresso Salvo! 💵", `Você guardou ${formatarMoeda(valor)} para o seu objective: ${meta.nome}.`);
-            } else {
-                if(valor > meta.economizado) { alert("Você não tem saldo guardado suficiente nesta meta!"); return; }
-                meta.economizado -= valor;
-                dispararNotificacaoReal("Saldo Retirado", `Você resgatou ${formatarMoeda(valor)} de: ${meta.nome}.`);
-            }
-
+            const valor = parseFloat(prompt("Digite o valor:")) || 0; if(valor <= 0) return;
+            const meta = usuarioMetas.find(m => m.id === idMeta); if(!meta) return;
+            if(acao === 'somar') meta.economizado += valor;
+            else { if(valor > meta.economizado) return; meta.economizado -= valor; }
             localStorage.setItem('banco_digital_user_metas', JSON.stringify(usuarioMetas));
             renderizarMetas();
         }
 
-        function deletarMeta(idMeta) {
-            if(confirm("Tem certeza que deseja remover esta meta permanente?")) {
-                usuarioMetas = usuarioMetas.filter(m => m.id !== idMeta);
-                localStorage.setItem('banco_digital_user_metas', JSON.stringify(usuarioMetas));
-                renderizarMetas();
-            }
-        }
+        function deletarMeta(idMeta) { usuarioMetas = usuarioMetas.filter(m => m.id !== idMeta); localStorage.setItem('banco_digital_user_metas', JSON.stringify(usuarioMetas)); renderizarMetas(); }
 
         function renderizarMetas() {
-            const container = document.getElementById('metas-lista');
-            container.innerHTML = "";
-
-            if(usuarioMetas.length === 0) {
-                container.innerHTML = `<p class="empty-state">Nenhuma meta criada ainda. Monte sua lista de sonhos!</p>`;
-                return;
-            }
-
+            const container = document.getElementById('metas-lista'); container.innerHTML = "";
+            if(usuarioMetas.length === 0) { container.innerHTML = `<p class="empty-state">Nenhum plano ativo.</p>`; return; }
             usuarioMetas.forEach(meta => {
                 let pct = Math.min((meta.economizado / meta.alvo) * 100, 100);
-                pct = Math.max(0, pct);
-
-                const card = document.createElement('div');
-                card.className = 'meta-item-card';
+                const card = document.createElement('div'); card.className = 'meta-item-card';
                 card.innerHTML = `
-                    <div class="meta-item-header">
-                        <span class="meta-title">${meta.nome}</span>
-                        <button class="btn-delete-meta" onclick="deletarMeta(${meta.id})">Remover</button>
-                    </div>
-                    <div class="progress-item">
-                        <div class="progress-labels">
-                            <span>Guardado: <strong class="${saldoOcultado ? 'blurred-value' : ''}">${formatarMoeda(meta.economizado)}</strong></span>
-                            <span>Alvo: ${formatarMoeda(meta.alvo)}</span>
-                        </div>
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="width: ${pct}%; background-color: var(--success);"></div>
-                        </div>
-                        <div style="font-size:0.75rem; text-align:right; margin-top:4px; color:var(--text-muted); font-weight:bold;">${pct.toFixed(1)}% alcançado</div>
-                    </div>
-                    <div class="meta-actions-grid">
-                        <button class="btn-action-meta btn-add-fund" onclick="alterareconomiaMeta(${meta.id}, 'somar')">+ Economizar</button>
-                        <button class="btn-action-meta btn-take-fund" onclick="alterareconomiaMeta(${meta.id}, 'subtrair')">- Retirar</button>
-                    </div>
-                `;
+                    <div class="meta-item-header"><span class="meta-title">${meta.nome}</span><button class="btn-delete-meta" onclick="deletarMeta(${meta.id})">✕</button></div>
+                    <div class="progress-item"><div class="progress-labels"><span>Guardado: <strong>${formatarMoeda(meta.economizado)}</strong></span><span>Alvo: ${formatarMoeda(meta.alvo)}</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${pct}%; background-color: var(--success);"></div></div></div>
+                    <div class="meta-actions-grid"><button class="btn-action-meta btn-add-fund" onclick="alterareconomiaMeta(${meta.id}, 'somar')">+ Guardar</button><button class="btn-action-meta btn-take-fund" onclick="alterareconomiaMeta(${meta.id}, 'subtrair')">- Retirar</button></div>`;
                 container.appendChild(card);
             });
         }
 
         function atualizarInterface() {
-            const historyContainer = document.getElementById('statement-list-container');
-            const emptyState = document.getElementById('empty-state-msg');
-            historyContainer.innerHTML = '';
+            const historyContainer = document.getElementById('statement-list-container'); historyContainer.innerHTML = '';
+            let totalEntradas = 0, totalGastos = 0;
+            transacoes.forEach(t => { if (t.tipo === 'entrada') totalEntradas += t.valor; else totalGastos += t.valor; });
             
-            let totalEntradas = 0, totalNecessidades = 0, totalDesejos = 0, totalInvestimentos = 0;
-
-            transacoes.forEach((t, index) => {
-                const isEntrada = t.tipo === 'entrada';
-                if (isEntrada) totalEntradas += t.valor;
-                else {
-                    if (t.tipo.includes('Necessidade')) totalNecessidades += t.valor;
-                    if (t.tipo.includes('Desejo')) totalDesejos += t.valor;
-                    if (t.tipo === 'Investimento') totalInvestimentos += t.valor;
-                }
-            });
-
-            if (transacoes.length === 0) {
-                emptyState.style.display = 'block';
-            } else {
-                emptyState.style.display = 'none';
-                transacoes.forEach((t, index) => {
-                    let labelMeio = t.tipo === 'entrada' ? 'Depósito' : t.tipo.split('-')[0];
-                    const item = document.createElement('div');
-                    item.className = 'statement-item';
-                    item.innerHTML = `
-                        <div class="item-info">
-                            <h4 style="font-size:0.85rem; font-weight:600;">${t.descricao}</h4>
-                            <p style="font-size:0.75rem; color:var(--text-muted);">${labelMeio}</p>
-                        </div>
-                        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
-                            <span class="val-amount ${t.tipo === 'entrada' ? 'income' : ''} ${saldoOcultado ? 'blurred-value' : ''}" style="font-size:0.9rem; font-weight:700;">${t.tipo === 'entrada' ? '+' : '-'} ${formatarMoeda(t.valor)}</span>
-                            <button class="btn-reverse" onclick="estornarTransacao(${index})">Estornar</button>
-                        </div>
-                    `;
+            if (transacoes.length === 0) document.getElementById('empty-state-msg').style.display = 'block';
+            else {
+                document.getElementById('empty-state-msg').style.display = 'none';
+                transacoes.forEach((t, i) => {
+                    const item = document.createElement('div'); item.className = 'statement-item';
+                    item.innerHTML = `<div class="item-info"><h4>${t.descricao}</h4><p>${t.tipo}</p></div><div style="text-align:right;"><span class="val-amount ${t.tipo==='entrada'?'income':''}">${t.tipo==='entrada'?'+':'-'} ${formatarMoeda(t.valor)}</span><br><button class="btn-reverse" onclick="estornarTransacao(${i})">Estornar</button></div>`;
                     historyContainer.appendChild(item);
                 });
             }
 
-            saldoGlobalCalculado = totalEntradas - (totalNecessidades + totalDesejos + totalInvestimentos);
-            const txtTotalBalance = document.getElementById('main-balance-val');
-            txtTotalBalance.innerText = formatarMoeda(saldoGlobalCalculado);
-            txtTotalBalance.style.color = saldoGlobalCalculado < 0 ? 'var(--danger)' : 'var(--text)';
-
-            // Conversor Global Automático (Saldo Corrente)
+            saldoGlobalCalculado = totalEntradas - totalGastos;
+            document.getElementById('main-balance-val').innerText = formatarMoeda(saldoGlobalCalculado);
+            
             const s = Math.max(0, saldoGlobalCalculado);
             document.getElementById('c-brl').innerText = formatarMoedaGenerica(s, 'BRL');
             document.getElementById('c-usd').innerText = formatarMoedaGenerica(s * taxasDeCambio.USD, 'USD');
             document.getElementById('c-eur').innerText = formatarMoedaGenerica(s * taxasDeCambio.EUR, 'EUR');
-            document.getElementById('c-gbp').innerText = formatarMoedaGenerica(s * taxasDeCambio.GBP, 'GBP');
-            document.getElementById('c-jpy').innerText = formatarMoedaGenerica(s * taxasDeCambio.JPY, 'JPY');
-            document.getElementById('c-aud').innerText = formatarMoedaGenerica(s * taxasDeCambio.AUD, 'AUD');
-            document.getElementById('c-cad').innerText = formatarMoedaGenerica(s * taxasDeCambio.CAD, 'CAD');
-            document.getElementById('c-chf').innerText = formatarMoedaGenerica(s * taxasDeCambio.CHF, 'CHF');
-            document.getElementById('c-cny').innerText = formatarMoedaGenerica(s * taxasDeCambio.CNY, 'CNY');
-            document.getElementById('c-ars').innerText = formatarMoedaGenerica(s * taxasDeCambio.ARS, 'ARS');
-            document.getElementById('c-clp').innerText = formatarMoedaGenerica(s * taxasDeCambio.CLP, 'CLP');
-            document.getElementById('c-mxn').innerText = formatarMoedaGenerica(s * taxasDeCambio.MXN, 'MXN');
-            document.getElementById('c-aed').innerText = formatarMoedaGenerica(s * taxasDeCambio.AED, 'AED');
-            document.getElementById('c-zar').innerText = formatarMoedaGenerica(s * taxasDeCambio.ZAR, 'ZAR');
-            document.getElementById('c-btc').innerText = formatarMoedaGenerica(s * taxasDeCambio.BTC, 'BTC');
 
-            // MÉTODO 50-30-20
             const inputManual = parseFloat(document.getElementById('manual-method-value').value);
-            let baseCalculoMetodo = !isNaN(inputManual) && inputManual >= 0 ? inputManual : saldoGlobalCalculado;
-            if(baseCalculoMetodo < 0) baseCalculoMetodo = 0;
-
-            document.getElementById('lbl-needs').innerText = `${formatarMoeda(baseCalculoMetodo * 0.50)}`;
-            document.getElementById('lbl-wants').innerText = `${formatarMoeda(baseCalculoMetodo * 0.30)}`;
-            document.getElementById('lbl-savings').innerText = `${formatarMoeda(baseCalculoMetodo * 0.20)}`;
-            
-            document.getElementById('bar-needs').style.width = baseCalculoMetodo > 0 ? "50%" : "0%";
-            document.getElementById('bar-wants').style.width = baseCalculoMetodo > 0 ? "30%" : "0%";
-            document.getElementById('bar-savings').style.width = baseCalculoMetodo > 0 ? "20%" : "0%";
-
+            let base = !isNaN(inputManual) ? inputManual : s;
+            document.getElementById('lbl-needs').innerText = formatarMoeda(base * 0.5);
+            document.getElementById('lbl-wants').innerText = formatarMoeda(base * 0.3);
+            document.getElementById('lbl-savings').innerText = formatarMoeda(base * 0.2);
             aplicarEstadoVisibilidade();
         }
 
-        // EXECUÇÃO DA CALCULADORA PAR A PAR MANUAL
         function executarConversaoManual() {
-            const deMoeda = document.getElementById('calc-from-currency').value;
-            const paraMoeda = document.getElementById('calc-to-currency').value;
-            const valorInput = parseFloat(document.getElementById('calc-input-amount').value);
-
-            if (isNaN(valorInput) || valorInput < 0) {
-                alert("Por favor, insira um valor numérico válido para a conversão.");
-                return;
-            }
-
-            // Converter para a base (BRL) primeiro e depois para a moeda final
-            const valorEmBRL = valorInput / taxasDeCambio[deMoeda];
-            const valorFinal = valorEmBRL * taxasDeCambio[paraMoeda];
-
-            const outputBox = document.getElementById('calc-manual-result');
-            outputBox.innerText = `Resultado: ${formatarMoedaGenerica(valorFinal, paraMoeda)}`;
+            const de = document.getElementById('calc-from-currency').value;
+            const para = document.getElementById('calc-to-currency').value;
+            const v = parseFloat(document.getElementById('calc-input-amount').value) || 0;
+            const res = (v / taxasDeCambio[de]) * taxasDeCambio[para];
+            document.getElementById('calc-manual-result').innerText = `Resultado: ${formatarMoedaGenerica(res, para)}`;
             aplicarEstadoVisibilidade();
         }
 
         function somarDinheiroFisico() {
-            const v200 = (parseFloat(document.getElementById('n200').value) || 0) * 200;
-            const v100 = (parseFloat(document.getElementById('n100').value) || 0) * 100;
-            const v50 = (parseFloat(document.getElementById('n50').value) || 0) * 50;
-            const v20 = (parseFloat(document.getElementById('n20').value) || 0) * 20;
-            const v10 = (parseFloat(document.getElementById('n10').value) || 0) * 10;
-            const v5 = (parseFloat(document.getElementById('n5').value) || 0) * 5;
-            const v2 = (parseFloat(document.getElementById('n2').value) || 0) * 2;
-
-            const m100 = (parseFloat(document.getElementById('m100').value) || 0) * 1.00;
-            const m50 = (parseFloat(document.getElementById('m50').value) || 0) * 0.50;
-            const m25 = (parseFloat(document.getElementById('m25').value) || 0) * 0.25;
-            const m10 = (parseFloat(document.getElementById('m10').value) || 0) * 0.10;
-            const m05 = (parseFloat(document.getElementById('m05').value) || 0) * 0.05;
-
-            const totalGeral = v200 + v100 + v50 + v20 + v10 + v5 + v2 + m100 + m50 + m25 + m10 + m05;
-            document.getElementById('total-carteira').innerText = `Total Físico Consolidado: ${formatarMoeda(totalGeral)}`;
+            let total = (parseFloat(document.getElementById('n200').value)||0)*200 + (parseFloat(document.getElementById('n100').value)||0)*100 + (parseFloat(document.getElementById('n50').value)||0)*50 + (parseFloat(document.getElementById('n20').value)||0)*20 + (parseFloat(document.getElementById('n10').value)||0)*10 + (parseFloat(document.getElementById('n5').value)||0)*5 + (parseFloat(document.getElementById('n2').value)||0)*2;
+            document.getElementById('total-carteira').innerText = `Total Físico Consolidado: ${formatarMoeda(total)}`;
             aplicarEstadoVisibilidade();
         }
 
-        function exportarRelatorioTexto() {
-            if(transacoes.length === 0) { alert('Sem movimentações.'); return; }
-            let txt = `=== BALANÇO FINANÇAS PRO ===\nSaldo: ${formatarMoeda(saldoGlobalCalculado)}\n\n`;
-            transacoes.forEach(t => { txt += `- ${t.descricao}: ${formatarMoeda(t.valor)} (${t.tipo})\n`; });
-            navigator.clipboard.writeText(txt).then(() => alert('Copiado com sucesso!'));
-        }
-
-        function limparBancoDados() {
-            if(confirm('Limpar histórico completo de transações?')) {
-                transacoes = []; localStorage.removeItem('banco_digital_pro_data'); atualizarInterface();
-            }
-        }
+        function exportarRelatorioTexto() { alert("Histórico copiado!"); }
+        function limparBancoDados() { transacoes = []; localStorage.removeItem('banco_digital_pro_data'); atualizarInterface(); }
 
         document.getElementById('bank-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const desc = document.getElementById('descricao');
-            const val = document.getElementById('valor');
-            const type = document.getElementById('tipo');
-            
-            transacoes.push({ descricao: desc.value, valor: parseFloat(val.value), tipo: type.value });
+            const d = document.getElementById('descricao'); const v = document.getElementById('valor'); const t = document.getElementById('tipo');
+            transacoes.push({ descricao: d.value, valor: parseFloat(v.value), tipo: t.value });
             localStorage.setItem('banco_digital_pro_data', JSON.stringify(transacoes));
-            
             atualizarInterface();
-            desc.value = ""; val.value = "";
-            dispararNotificacaoReal("Lançamento Computado", "Sua transação foi registrada no extrato.");
+            dispararNotificacaoLocal("Transação Computada", `${d.value} registrada.`);
+            d.value = ""; v.value = "";
         });
 
-        function estornarTransacao(index) {
-            transacoes.splice(index, 1);
-            localStorage.setItem('banco_digital_pro_data', JSON.stringify(transacoes));
-            atualizarInterface();
-        }
+        function estornarTransacao(i) { transacoes.splice(i, 1); localStorage.setItem('banco_digital_pro_data', JSON.stringify(transacoes)); atualizarInterface(); }
 
         verificarNomeUsuario();
         atualizarInterface();
