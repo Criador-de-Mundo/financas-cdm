@@ -18,9 +18,9 @@ try {
 // 🔑 COLOQUE SUAS CHAVES VAPID REAIS AQUI
 $auth = [
     'VAPID' => [
-        'subject' => 'mailto:seu-email@dominio.com',
-        'publicKey' => 'SUA_CHAVE_PUBLICA_VAPID_AQUI',
-        'privateKey' => 'SUA_CHAVE_PRIVADA_VAPID_AQUI',
+        'subject' => 'mailto:criadordemundo1@gmail.com',
+        'publicKey' => 'BOTANNrAtcULc2IP3PwFYC_i53qpxMzwuSYEuk6FmYANhAYZeYnSg8cFxtwuSlLMLm2dvV_MHI9iVMNyRJQjka8',
+        'privateKey' => 'yOKJI-uMSdtEJHV2EP5MSVsF2GjHcSqbj7GX3QrN8T8',
     ],
 ];
 
