@@ -166,6 +166,7 @@
 
         .btn-confirm { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; width: 100%; }
         .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 12px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+        .btn-youtube { background: #ff0000; color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 0.85rem; font-weight: bold; width: 100%; margin-top: 10px; text-align: center; text-decoration: none; display: inline-block; }
 
         .metas-lista-container { display: flex; flex-direction: column; gap: 16px; margin-top: 15px; }
         .meta-item-card { background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 18px; padding: 16px; }
@@ -182,7 +183,7 @@
         .btn-add-fund { background: rgba(16, 185, 129, 0.15); border-color: var(--success); color: var(--success); }
         .btn-take-fund { background: rgba(244, 63, 94, 0.15); border-color: var(--danger); color: var(--danger); }
 
-        .currency-list-scroll { display: flex; flex-direction: column; gap: 8px; max-height: 240px; overflow-y: auto; padding-right: 4px; margin-bottom: 10px; }
+        .currency-list-scroll { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; padding-right: 4px; margin-bottom: 10px; }
         .convert-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--background); border: 1px solid var(--border); border-radius: 12px; }
         .convert-item span { font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
         .convert-item strong { font-size: 0.95rem; color: var(--success); transition: filter 0.2s ease; }
@@ -207,7 +208,7 @@
     <div id="welcome-screen" class="welcome-overlay" style="display: none;">
         <div class="welcome-card">
             <h2>Seja bem-vindo!</h2>
-            <p>Digite seu nome para configure seu ecossistema financeiro:</p>
+            <p>Digite seu nome para configurar seu ecossistema financeiro:</p>
             <div class="form-grid">
                 <input type="text" id="init-username-input" placeholder="Ex: João Silva...">
                 <button class="btn-confirm" onclick="salvarNomeInicial()">Começar</button>
@@ -289,7 +290,7 @@
         <div id="tela-metodo" class="app-screen">
             <div class="method-panel">
                 <h3>Distribuição Regra 50-30-20</h3>
-                <input type="number" id="manual-method-value" placeholder="Valor Customizado" oninput="atualizarInterface()" style="margin-bottom: 15px;">
+                <input type="number" id="manual-method-value" placeholder="Usar Valor Customizado" oninput="calcularMetodo503020()" style="margin-bottom: 15px;">
                 <div class="progress-group" style="display:flex; flex-direction:column; gap:14px;">
                     <div>Necessidades (50%): <span id="lbl-needs">R$ 0,00</span></div>
                     <div>Desejos (30%): <span id="lbl-wants">R$ 0,00</span></div>
@@ -300,24 +301,34 @@
 
         <div id="tela-conversor" class="app-screen">
             <div class="calc-card">
-                <h3>Câmbio Base Global</h3>
+                <h3>Conversor Automático (Base Dinâmica)</h3>
+                <input type="number" id="manual-currency-base" placeholder="Mudar valor para converter (ou usa o Saldo)" oninput="atualizarMoedas()" style="margin-bottom: 15px;">
                 <div class="currency-list-scroll">
-                    <div class="convert-item"><span>🇧🇷 BRL</span><strong id="c-brl">R$ 0,00</strong></div>
-                    <div class="convert-item"><span>🇺🇸 USD</span><strong id="c-usd">$ 0,00</strong></div>
-                    <div class="convert-item"><span>🇪🇺 EUR</span><strong id="c-eur">€ 0,00</strong></div>
+                    <div class="convert-item"><span>🇧🇷 Real (BRL)</span><strong id="c-brl">R$ 0,00</strong></div>
+                    <div class="convert-item"><span>🇺🇸 Dólar (USD)</span><strong id="c-usd">$ 0,00</strong></div>
+                    <div class="convert-item"><span>🇪🇺 Euro (EUR)</span><strong id="c-eur">€ 0,00</strong></div>
+                    <div class="convert-item"><span>🇬🇧 Libra (GBP)</span><strong id="c-gbp">£ 0,00</strong></div>
+                    <div class="convert-item"><span>🇯🇵 Iene (JPY)</span><strong id="c-jpy">¥ 0,00</strong></div>
+                    <div class="convert-item"><span>🇦🇷 Peso Arg (ARS)</span><strong id="c-ars">$ 0,00</strong></div>
+                    <div class="convert-item"><span>₿ Bitcoin (BTC)</span><strong id="c-btc">₿ 0,0000</strong></div>
                 </div>
             </div>
         </div>
 
         <div id="tela-calc" class="app-screen">
             <div class="calc-card">
-                <h3>Caixa Físico</h3>
+                <h3>Caixa Físico / Carteira</h3>
                 <div class="cash-grid">
+                    <div class="cash-block"><label>R$ 200</label><input type="number" id="n200" value="0" oninput="somarDinheiroFisico()"></div>
                     <div class="cash-block"><label>R$ 100</label><input type="number" id="n100" value="0" oninput="somarDinheiroFisico()"></div>
                     <div class="cash-block"><label>R$ 50</label><input type="number" id="n50" value="0" oninput="somarDinheiroFisico()"></div>
                     <div class="cash-block"><label>R$ 20</label><input type="number" id="n20" value="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 10</label><input type="number" id="n10" value="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 5</label><input type="number" id="n5" value="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 2</label><input type="number" id="n2" value="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>Moedas</label><input type="number" id="nmoedas" step="0.05" value="0" oninput="somarDinheiroFisico()"></div>
                 </div>
-                <div id="total-carteira" class="result-box" style="margin-top:15px;">Total: R$ 0,00</div>
+                <div id="total-carteira" class="result-box" style="margin-top:15px;">Total no Caixa: R$ 0,00</div>
             </div>
         </div>
 
@@ -328,6 +339,7 @@
                 <div class="utility-buttons">
                     <button class="btn-secondary" onclick="limparBancoDados()" style="color:var(--danger); border-color:var(--danger);">Limpar Tudo</button>
                 </div>
+                <a href="https://www.youtube.com/@CriadorDeMundo" target="_blank" class="btn-youtube">📺 Seguir no YouTube</a>
             </div>
         </div>
     </div>
@@ -347,7 +359,6 @@
 
     <script>
         let instaladorPWA = null;
-        // INSIRA SUA CHAVE PÚBLICA VAPID GERADA AQUI
         const PUBLIC_VAPID_KEY = 'BOTANNrAtcULc2IP3PwFYC_i53qpxMzwuSYEuk6FmYANhAYZeYnSg8cFxtwuSlLMLm2dvV_MHI9iVMNyRJQjka8'; 
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -382,8 +393,8 @@
                         applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
                     })
                     .then(subscription => {
-                        // 🛠️ ROTA CORRIGIDA DE UNDERLINE PARA HÍFEN AQUI:
-                        fetch('../backend/salvar-inscricao.php', {
+                        // 🛠️ APONTANDO DO INDEX DA RAIZ DIRETAMENTE PARA A PASTA BACKEND CORRETA
+                        fetch('./backend/salvar-inscricao.php', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(subscription)
@@ -406,6 +417,7 @@
         let transacoes = JSON.parse(localStorage.getItem('b_data')) || [];
         let usuarioMetas = JSON.parse(localStorage.getItem('b_metas')) || [];
         let saldoOcultado = JSON.parse(localStorage.getItem('b_blur')) || false;
+        let saldoGlobalCalculado = 0;
 
         function verificarNomeUsuario() {
             const n = localStorage.getItem('b_user');
@@ -449,14 +461,51 @@
             });
         }
 
+        function calcularMetodo503020() {
+            let base = parseFloat(document.getElementById('manual-method-value').value);
+            if (isNaN(base)) base = saldoGlobalCalculado;
+
+            document.getElementById('lbl-needs').innerText = `R$ ${(base * 0.5).toFixed(2)}`;
+            document.getElementById('lbl-wants').innerText = `R$ ${(base * 0.3).toFixed(2)}`;
+            document.getElementById('lbl-savings').innerText = `R$ ${(base * 0.2).toFixed(2)}`;
+        }
+
+        function atualizarMoedas() {
+            let valorBase = parseFloat(document.getElementById('manual-currency-base').value);
+            if (isNaN(valorBase)) valorBase = saldoGlobalCalculado;
+
+            // Cotações mockadas estáveis para conversão aromática automática
+            document.getElementById('c-brl').innerText = `R$ ${valorBase.toFixed(2)}`;
+            document.getElementById('c-usd').innerText = `$ ${(valorBase / 5.15).toFixed(2)}`;
+            document.getElementById('c-eur').innerText = `€ ${(valorBase / 5.55).toFixed(2)}`;
+            document.getElementById('c-gbp').innerText = `£ ${(valorBase / 6.45).toFixed(2)}`;
+            document.getElementById('c-jpy').innerText = `¥ ${(valorBase * 30.2).toFixed(0)}`;
+            document.getElementById('c-ars').innerText = `$ ${(valorBase * 170).toFixed(2)}`;
+            document.getElementById('c-btc').innerText = `₿ ${(valorBase / 330000).toFixed(6)}`;
+        }
+
+        function somarDinheiroFisico() {
+            let t = ((parseFloat(document.getElementById('n200').value)||0)*200) +
+                    ((parseFloat(document.getElementById('n100').value)||0)*100) + 
+                    ((parseFloat(document.getElementById('n50').value)||0)*50) + 
+                    ((parseFloat(document.getElementById('n20').value)||0)*20) +
+                    ((parseFloat(document.getElementById('n10').value)||0)*10) +
+                    ((parseFloat(document.getElementById('n5').value)||0)*5) +
+                    ((parseFloat(document.getElementById('n2').value)||0)*2) +
+                    (parseFloat(document.getElementById('nmoedas').value)||0);
+            
+            document.getElementById('total-carteira').innerText = `Total no Caixa: R$ ${t.toFixed(2)}`;
+        }
+
         function atualizarInterface() {
             let total = 0;
             transacoes.forEach(t => total += (t.tipo === 'entrada' ? t.valor : -t.valor));
+            saldoGlobalCalculado = total;
+
             document.getElementById('main-balance-val').innerText = `R$ ${total.toFixed(2)}`;
             
-            document.getElementById('lbl-needs').innerText = `R$ ${(total*0.5).toFixed(2)}`;
-            document.getElementById('lbl-wants').innerText = `R$ ${(total*0.3).toFixed(2)}`;
-            document.getElementById('lbl-savings').innerText = `R$ ${(total*0.2).toFixed(2)}`;
+            calcularMetodo503020();
+            atualizarMoedas();
 
             const hist = document.getElementById('statement-list-container'); hist.innerHTML = "";
             transacoes.forEach(t => {
@@ -465,11 +514,6 @@
                 hist.appendChild(i);
             });
             aplicarEstadoVisibilidade();
-        }
-
-        function somarDinheiroFisico() {
-            let t = (parseFloat(document.getElementById('n100').value)||0)*100 + (parseFloat(document.getElementById('n50').value)||0)*50 + (parseFloat(document.getElementById('n20').value)||0)*20;
-            document.getElementById('total-carteira').innerText = `Total: R$ ${t.toFixed(2)}`;
         }
 
         function limparBancoDados() { transacoes = []; localStorage.removeItem('b_data'); atualizarInterface(); }
@@ -483,6 +527,7 @@
             });
             localStorage.setItem('b_data', JSON.stringify(transacoes));
             atualizarInterface();
+            document.getElementById('bank-form').reset();
         });
 
         verificarNomeUsuario();
