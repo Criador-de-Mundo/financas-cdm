@@ -172,14 +172,14 @@
         .meta-item-card { background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 18px; padding: 16px; }
         .meta-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .meta-title { font-weight: 700; font-size: 1rem; color: var(--info); }
-        .btn-delete-meta { background: transparent; border: none; color: var(--danger); font-weight: bold; cursor: pointer; font-size: 0.8rem; }
+        .btn-delete-meta { background: transparent; border: none; color: var(--danger); font-weight: bold; cursor: pointer; font-size: 0.85rem; padding: 4px; }
         
-        .progress-bar-bg { background: rgba(255,255,255,0.05); height: 8px; border-radius: 4px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; width: 0%; border-radius: 4px; transition: width 0.4s ease; }
-        .progress-labels { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; margin-bottom: 4px; }
+        .progress-bar-bg { background: rgba(255,255,255,0.05); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 8px; }
+        .progress-bar-fill { height: 100%; width: 0%; border-radius: 4px; transition: width 0.4s ease; background: var(--success); }
+        .progress-labels { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; margin-bottom: 4px; margin-top: 6px; color: var(--text-muted); }
         
         .meta-actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-        .btn-action-meta { padding: 10px; border-radius: 10px; border: 1px solid var(--border); font-size: 0.8rem; font-weight: 700; cursor: pointer; color: white; }
+        .btn-action-meta { padding: 10px; border-radius: 10px; border: 1px solid var(--border); font-size: 0.8rem; font-weight: 700; cursor: pointer; }
         .btn-add-fund { background: rgba(16, 185, 129, 0.15); border-color: var(--success); color: var(--success); }
         .btn-take-fund { background: rgba(244, 63, 94, 0.15); border-color: var(--danger); color: var(--danger); }
 
@@ -318,17 +318,28 @@
         <div id="tela-calc" class="app-screen">
             <div class="calc-card">
                 <h3>Caixa Físico / Carteira</h3>
+                
+                <div class="calc-sub-title">Cédulas / Papel</div>
                 <div class="cash-grid">
-                    <div class="cash-block"><label>R$ 200</label><input type="number" id="n200" value="0" oninput="somarDinheiroFisico()"></div>
-                    <div class="cash-block"><label>R$ 100</label><input type="number" id="n100" value="0" oninput="somarDinheiroFisico()"></div>
-                    <div class="cash-block"><label>R$ 50</label><input type="number" id="n50" value="0" oninput="somarDinheiroFisico()"></div>
-                    <div class="cash-block"><label>R$ 20</label><input type="number" id="n20" value="0" oninput="somarDinheiroFisico()"></div>
-                    <div class="cash-block"><label>R$ 10</label><input type="number" id="n10" value="0" oninput="somarDinheiroFisico()"></div>
-                    <div class="cash-block"><label>R$ 5</label><input type="number" id="n5" value="0" oninput="somarDinheiroFisico()"></div>
-                    <div class="cash-block"><label>R$ 2</label><input type="number" id="n2" value="0" oninput="somarDinheiroFisico()"></div>
-                    <div class="cash-block"><label>Moedas</label><input type="number" id="nmoedas" step="0.05" value="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 200</label><input type="number" id="n200" value="0" min="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 100</label><input type="number" id="n100" value="0" min="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 50</label><input type="number" id="n50" value="0" min="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 20</label><input type="number" id="n20" value="0" min="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 10</label><input type="number" id="n10" value="0" min="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 5</label><input type="number" id="n5" value="0" min="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 2</label><input type="number" id="n2" value="0" min="0" oninput="somarDinheiroFisico()"></div>
                 </div>
-                <div id="total-carteira" class="result-box" style="margin-top:15px;">Total no Caixa: R$ 0,00</div>
+
+                <div class="calc-sub-title">Moedas Físicas (Quantidade Total)</div>
+                <div class="cash-grid">
+                    <div class="cash-block"><label>R$ 1,00</label><input type="number" id="m100" value="0" min="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 0,50</label><input type="number" id="m50" value="0" min="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 0,25</label><input type="number" id="m25" value="0" min="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 0,10</label><input type="number" id="m10" value="0" min="0" oninput="somarDinheiroFisico()"></div>
+                    <div class="cash-block"><label>R$ 0,05</label><input type="number" id="m05" value="0" min="0" oninput="somarDinheiroFisico()"></div>
+                </div>
+
+                <div id="total-carteira" class="result-box" style="margin-top:20px;">Total no Caixa: R$ 0,00</div>
             </div>
         </div>
 
@@ -393,7 +404,6 @@
                         applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
                     })
                     .then(subscription => {
-                        // 🛠️ APONTANDO DO INDEX DA RAIZ DIRETAMENTE PARA A PASTA BACKEND CORRETA
                         fetch('./backend/salvar-inscricao.php', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
@@ -443,20 +453,75 @@
         function toggleMenu() { document.getElementById('sidebar-menu').classList.toggle('open'); document.getElementById('menu-overlay').classList.toggle('show'); }
         function mudarTela(id) { document.querySelectorAll('.app-screen').forEach(t => t.classList.remove('active-screen')); document.getElementById(`tela-${id}`).classList.add('active-screen'); toggleMenu(); }
 
+        // --- GESTÃO DE METAS ---
         function criarNovaMeta() {
             const n = document.getElementById('new-meta-name').value;
             const v = parseFloat(document.getElementById('new-meta-value').value);
-            if(!n || !v) return;
+            if(!n || isNaN(v) || v <= 0) return;
             usuarioMetas.push({id: Date.now(), nome: n, alvo: v, economizado: 0});
             localStorage.setItem('b_metas', JSON.stringify(usuarioMetas));
+            document.getElementById('new-meta-name').value = '';
+            document.getElementById('new-meta-value').value = '';
             renderizarMetas();
+        }
+
+        function alterarFundoMeta(id, tipo) {
+            const valorInformado = prompt(tipo === 'add' ? 'Quanto deseja guardar nesta meta?' : 'Quanto deseja retirar desta meta?');
+            const valor = parseFloat(valorInformado);
+            if(isNaN(valor) || valor <= 0) return;
+
+            const idx = usuarioMetas.findIndex(m => m.id === id);
+            if(idx !== -1) {
+                if(tipo === 'add') {
+                    usuarioMetas[idx].economizado += valor;
+                } else {
+                    if(valor > usuarioMetas[idx].economizado) {
+                        alert('Valor maior do que o saldo atual da meta!');
+                        return;
+                    }
+                    usuarioMetas[idx].economizado -= valor;
+                }
+                localStorage.setItem('b_metas', JSON.stringify(usuarioMetas));
+                renderizarMetas();
+            }
+        }
+
+        function removerMeta(id) {
+            if(confirm('Tem certeza de que deseja excluir permanentemente este objetivo?')) {
+                usuarioMetas = usuarioMetas.filter(m => m.id !== id);
+                localStorage.setItem('b_metas', JSON.stringify(usuarioMetas));
+                renderizarMetas();
+            }
         }
 
         function renderizarMetas() {
             const c = document.getElementById('metas-lista'); c.innerHTML = "";
+            if(usuarioMetas.length === 0) {
+                c.innerHTML = '<div class="empty-state">Nenhum objetivo criado ainda.</div>';
+                return;
+            }
             usuarioMetas.forEach(m => {
+                let pct = (m.economizado / m.alvo) * 100;
+                if(pct > 100) pct = 100;
+                
                 const d = document.createElement('div'); d.className = "meta-item-card";
-                d.innerHTML = `<strong>${m.nome}</strong> - Alvo: R$ ${m.alvo}`;
+                d.innerHTML = `
+                    <div class="meta-item-header">
+                        <span class="meta-title">${m.nome}</span>
+                        <button class="btn-delete-meta" onclick="removerMeta(${m.id})">✕ Remover</button>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: ${pct}%"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span>Progresso: ${pct.toFixed(1)}%</span>
+                        <span>R$ ${m.economizado.toFixed(2)} / R$ ${m.alvo.toFixed(2)}</span>
+                    </div>
+                    <div class="meta-actions-grid">
+                        <button class="btn-action-meta btn-add-fund" onclick="alterarFundoMeta(${m.id}, 'add')">➕ Guardar</button>
+                        <button class="btn-action-meta btn-take-fund" onclick="alterarFundoMeta(${m.id}, 'take')">➖ Resgatar</button>
+                    </div>
+                `;
                 c.appendChild(d);
             });
         }
@@ -474,7 +539,6 @@
             let valorBase = parseFloat(document.getElementById('manual-currency-base').value);
             if (isNaN(valorBase)) valorBase = saldoGlobalCalculado;
 
-            // Cotações mockadas estáveis para conversão aromática automática
             document.getElementById('c-brl').innerText = `R$ ${valorBase.toFixed(2)}`;
             document.getElementById('c-usd').innerText = `$ ${(valorBase / 5.15).toFixed(2)}`;
             document.getElementById('c-eur').innerText = `€ ${(valorBase / 5.55).toFixed(2)}`;
@@ -484,17 +548,25 @@
             document.getElementById('c-btc').innerText = `₿ ${(valorBase / 330000).toFixed(6)}`;
         }
 
+        // --- CAIXA FÍSICO COM MOEDAS INDIVIDUAIS ---
         function somarDinheiroFisico() {
-            let t = ((parseFloat(document.getElementById('n200').value)||0)*200) +
-                    ((parseFloat(document.getElementById('n100').value)||0)*100) + 
-                    ((parseFloat(document.getElementById('n50').value)||0)*50) + 
-                    ((parseFloat(document.getElementById('n20').value)||0)*20) +
-                    ((parseFloat(document.getElementById('n10').value)||0)*10) +
-                    ((parseFloat(document.getElementById('n5').value)||0)*5) +
-                    ((parseFloat(document.getElementById('n2').value)||0)*2) +
-                    (parseFloat(document.getElementById('nmoedas').value)||0);
+            let n200 = (parseFloat(document.getElementById('n200').value) || 0) * 200;
+            let n100 = (parseFloat(document.getElementById('n100').value) || 0) * 100; 
+            let n50  = (parseFloat(document.getElementById('n50').value) || 0) * 50; 
+            let n20  = (parseFloat(document.getElementById('n20').value) || 0) * 20;
+            let n10  = (parseFloat(document.getElementById('n10').value) || 0) * 10;
+            let n5   = (parseFloat(document.getElementById('n5').value) || 0) * 5;
+            let n2   = (parseFloat(document.getElementById('n2').value) || 0) * 2;
             
-            document.getElementById('total-carteira').innerText = `Total no Caixa: R$ ${t.toFixed(2)}`;
+            // Soma Inteligente das Moedas por Quantidade Informada
+            let m100 = (parseFloat(document.getElementById('m100').value) || 0) * 1.00;
+            let m50  = (parseFloat(document.getElementById('m50').value) || 0) * 0.50;
+            let m25  = (parseFloat(document.getElementById('m25').value) || 0) * 0.25;
+            let m10  = (parseFloat(document.getElementById('m10').value) || 0) * 0.10;
+            let m05  = (parseFloat(document.getElementById('m05').value) || 0) * 0.05;
+
+            let totalCaixa = n200 + n100 + n50 + n20 + n10 + n5 + n2 + m100 + m50 + m25 + m10 + m05;
+            document.getElementById('total-carteira').innerText = `Total no Caixa: R$ ${totalCaixa.toFixed(2)}`;
         }
 
         function atualizarInterface() {
@@ -508,11 +580,15 @@
             atualizarMoedas();
 
             const hist = document.getElementById('statement-list-container'); hist.innerHTML = "";
-            transacoes.forEach(t => {
-                const i = document.createElement('div'); i.className = "statement-item";
-                i.innerHTML = `<span>${t.descricao}</span> <strong>R$ ${t.valor.toFixed(2)}</strong>`;
-                hist.appendChild(i);
-            });
+            if(transacoes.length === 0) {
+                hist.innerHTML = '<div class="empty-state">Nenhum lançamento no histórico.</div>';
+            } else {
+                transacoes.forEach(t => {
+                    const i = document.createElement('div'); i.className = "statement-item";
+                    i.innerHTML = `<span>${t.descricao}</span> <strong>R$ ${t.valor.toFixed(2)}</strong>`;
+                    hist.appendChild(i);
+                });
+            }
             aplicarEstadoVisibilidade();
         }
 
@@ -533,6 +609,7 @@
         verificarNomeUsuario();
         atualizarInterface();
         renderizarMetas();
+        somarDinheiroFisico();
     </script>
 </body>
 </html>
