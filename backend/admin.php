@@ -3,19 +3,20 @@ require 'vendor/autoload.php';
 use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
 
-// 🔑 COLOQUE OS MESMOS DADOS DE CONEXÃO DO PASSO ANTERIOR
-$db_host = 'localhost';
-$db_name = 'NOME_DO_SEU_BANCO';
-$db_user = 'USUARIO_DO_BANCO';
-$db_pass = 'SENHA_DO_USUARIO';
+// 🔑 CONFIGURAÇÃO DO BANCO LOCAL DO TERMUX
+$db_host = '127.0.0.1';
+$db_name = 'financas_pro';
+$db_user = 'root';
+$db_pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8mb4", $db_user, $db_pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("Erro ao conectar no banco: " . $e->getMessage());
+    die("Erro ao conectar no banco local: " . $e->getMessage());
 }
 
-// 🔑 COLOQUE SUAS CHAVES VAPID REAIS AQUI
+// 🔑 SUAS CHAVES VAPID MANIFESTADAS
 $auth = [
     'VAPID' => [
         'subject' => 'mailto:criadordemundo1@gmail.com',
@@ -63,6 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['mensagem'])) {
             }
         }
         $mensagemSucesso = "Notificação disparada com sucesso via MySQL para {$contagem} celulares!";
+        
+        // Atualiza a contagem após o envio
+        $totalDispositivos = $pdo->query("SELECT COUNT(*) FROM push_subscriptions")->fetchColumn();
     } else {
         $mensagemSucesso = "Nenhum celular encontrado no banco de dados para enviar.";
     }

@@ -207,7 +207,7 @@
     <div id="welcome-screen" class="welcome-overlay" style="display: none;">
         <div class="welcome-card">
             <h2>Seja bem-vindo!</h2>
-            <p>Digite seu nome para configurar seu ecossistema financeiro:</p>
+            <p>Digite seu nome para configure seu ecossistema financeiro:</p>
             <div class="form-grid">
                 <input type="text" id="init-username-input" placeholder="Ex: João Silva...">
                 <button class="btn-confirm" onclick="salvarNomeInicial()">Começar</button>
@@ -382,7 +382,8 @@
                         applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
                     })
                     .then(subscription => {
-                        fetch('../backend/salvar_inscricao.php', {
+                        // 🛠️ ROTA CORRIGIDA DE UNDERLINE PARA HÍFEN AQUI:
+                        fetch('../backend/salvar-inscricao.php', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(subscription)

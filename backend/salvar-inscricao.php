@@ -3,18 +3,18 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 
-// 🔑 ADICIONE AQUI OS DADOS DO SEU BANCO DE DADOS (Você cria eles no cPanel)
-$db_host = 'localhost';             // Geralmente é 'localhost'
-$db_name = 'NOME_DO_SEU_BANCO';     // Nome do banco criado no painel
-$db_user = 'USUARIO_DO_BANCO';     // Usuário que você vinculou ao banco
-$db_pass = 'SENHA_DO_USUARIO';      // Senha que você definiu para o usuário
+// 🔑 CONFIGURAÇÃO DO BANCO LOCAL DO TERMUX
+$db_host = '127.0.0.1';             
+$db_name = 'financas_pro';     
+$db_user = 'root';     
+$db_pass = '';      
 
 try {
     // O PDO é o sistema nativo do PHP para conversar com o MySQL com segurança
     $pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8mb4", $db_user, $db_pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    echo json_encode(["status" => "erro", "mensagem" => "Falha ao conectar no banco de dados."]);
+    echo json_encode(["status" => "erro", "mensagem" => "Falha ao conectar no banco de dados local."]);
     exit;
 }
 
