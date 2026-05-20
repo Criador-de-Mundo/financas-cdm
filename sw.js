@@ -1,44 +1,49 @@
-// Instalação do Service Worker e Cache básico
+const CACHE_NAME = 'financas-cdm-v1';
+// Lista de arquivos locais que o app precisa para rodar offline
+const ASSETS_TO_CACHE = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icone.png'
+];
+
+// Instala o Service Worker e guarda os arquivos no cache do celular
 self.addEventListener('install', (e) => {
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', (e) => {
-  e.waitUntil(self.clients.claim());
-});
-
-// Escuta eventos de Notificação Push Real vindos de um servidor externo (FCM, OneSignal, VAPID)
-self.addEventListener('push', (event) => {
-  let data = { title: 'Finanças PRO', body: 'Nova atualização disponível!' };
-  
-  if (event.data) {
-    try {
-      data = event.data.json();
-    } catch (e) {
-      data.body = event.data.text();
-    }
-  }
-
-  const options = {
-    body: data.body,
-    icon: 'icone.png',
-    badge: 'icone.png',
-    vibrate: [100, 50, 100],
-    data: {
-      dateOfArrival: Date.now(),
-      primaryKey: '1'
-    }
-  };
-
-  event.waitUntil(
-    self.registration.showNotification(data.title, options)
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE);
+    })
   );
 });
 
-// Ação ao clicar na notificação push
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  event.waitUntil(
-    clients.openWindow('/')
+// Ativa o SW e remove caches antigos se houver atualização
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      );
+    })
+  );
+});
+
+// Intercepta as requisições: se estiver offline, puxa do cache do celular
+self.addEventListener('fetch', (e) => {
+  // Ignora requisições de backend (PHP) pois o MySQL precisa de internet
+  if (e.request.url.includes('/backend/')) {
+    return;
+  }
+
+  e.respondWith(
+    caches.match(e.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(e.request);
+    })
   );
 });
