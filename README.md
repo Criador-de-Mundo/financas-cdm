@@ -30,7 +30,7 @@ Este projeto foi construído para fins educacionais e demonstrativos para o cana
 
 ### Opção 1: Via Deploy (GitHub Pages)
 Basta acederes ao link seguro gerado automaticamente na aba de configurações do teu repositório:
-`https://teu-utilizador.github.io/nome-do-repositorio/`
+`[https://teu-utilizador.github.io/nome-do-repositorio/](https://github.com/Criador-de-Mundo/financas-cdm)`
 
 ### Opção 2: Execução Local
 1. Descarrega os ficheiros `index.html`, `manifest.json` e a imagem `icone.png`.
